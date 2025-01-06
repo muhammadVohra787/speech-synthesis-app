@@ -113,4 +113,3 @@ Special thanks to the developers of the models and libraries used in this projec
 - [SciPy](https://scipy.org/)
 
 Feel free to explore and enhance the app to suit your needs!
-``` 
