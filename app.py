@@ -23,19 +23,23 @@ fastspeech2, hifi_gan = load_models()
 # Generate the speech from text
 def text_to_speech(text:str, progress_bar:st.progress):
     print("Generating speech for: ", text[:10])
-    progress_bar.progress(60)
+    progress_bar.progress(20)
     # Get the mel output and check its size
     mel_output, durations, pitch, energy = fastspeech2.encode_text(
         [text],
-        pace=1.0,        # scale up/down the speed
+        pace=1.15,        # scale up/down the speed
         pitch_rate=1.0,  # scale up/down the pitch
-        energy_rate=1.0, # scale up/down the energy
+        energy_rate=1.1, # scale up/down the energy
     )
-    
+    progress_bar.progress(40)
+    notify_msg.write("Extracting Mel Spectrogram ... ")
+
     # Check the shape of the mel output
     print(f"Mel Output Shape: {mel_output.shape}")
 
-    waveforms = hifi_gan.decode_batch(mel_output)
+    notify_msg.write("Extracting Waveforms ....")
+    waveforms = hifi_gan.decode_batch(spectrogram=mel_output, hop_len=1)
+    progress_bar.progress(70)
     return waveforms
 
 # Set up Streamlit UI
@@ -50,20 +54,23 @@ example_paragraphs = [
 text_input = st.text_area(label='Enter Text for Speech:', help='Hello, welcome to the Streamlit TTS demo!', max_chars=400, value=example_paragraphs[0])
 
 # Add a circular progress bar while generating speech
+notify_msg = st.empty()
+
 progress_bar = st.progress(0)
 st.subheader("You can use one of these samples to test the model. Copy and paste the item into the input box and click generate speech")
 for ex in example_paragraphs:
     st.write(ex)
+
 if st.button('Generate Speech'):
-    if text_input.strip():
-        print(len(text_input))
+    print(len(text_input))
+    if text_input.strip() and len(text_input) > 6:
+        notify_msg.write("Prasing text .... ")
+        
         start = time.perf_counter()
         progress_bar.progress(10)
-        # Apply padding here if needed based on model's requirements
-        padded_text_input = text_input.ljust(500)  # Adjust 500 based on the model's max token length
-        progress_bar.progress(30)
+        
         # Generate waveform
-        waveform = text_to_speech(padded_text_input, progress_bar)
+        waveform = text_to_speech(text_input, progress_bar)
         progress_bar.progress(80)
         # Convert the waveform to 16-bit PCM format
         audio_data = waveform.squeeze().cpu().numpy()
@@ -91,9 +98,9 @@ if st.button('Generate Speech'):
         end = time.perf_counter()
         elapsed = end - start
         print(f'Time taken: {elapsed:.6f} seconds')
-
+        notify_msg.write("Done")
         # Update progress bar to 100% when done
         progress_bar.progress(100)
 
     else:
-        st.error("Please enter some text.")
+        st.error("Text needs to be over 5 characters")
