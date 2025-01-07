@@ -97,8 +97,7 @@ if st.button('Generate Speech'):
 
         end = time.perf_counter()
         elapsed = end - start
-        print(f'Time taken: {elapsed:.6f} seconds')
-        notify_msg.write("Done")
+        notify_msg.write(f"Done- Time taken: {elapsed:.6f} seconds")
         # Update progress bar to 100% when done
         progress_bar.progress(100)
 
