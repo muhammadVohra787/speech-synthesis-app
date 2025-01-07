@@ -47,8 +47,10 @@ st.title('Tacotron2 Text-to-Speech Web App')
 
 # Text input with a maximum character limit
 example_paragraphs = [
-    "This is a sample paragraph for testing the text to speech functionality. You can copy and paste this text to see how the system works. The model should generate speech based on this input text.",
-    "The rapid advancement of technology has led to significant changes in our daily lives. Innovations in communication, transportation, and entertainment have made the world more connected and accessible than ever before."
+    "Welcome to the text to speech demo.",
+    "Learning new things every day makes life exciting.",
+    "Hello, this is a test for the text to speech system.",
+    "Technology is changing the way we live and connect with each other."
 ]
 
 text_input = st.text_area(label='Enter Text for Speech:', help='Hello, welcome to the Streamlit TTS demo!', max_chars=400, value=example_paragraphs[0])
